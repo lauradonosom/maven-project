@@ -1,5 +1,12 @@
 pipeline{
     agent any
+    parameters{
+        string(name:'tomcat_dev',defaultValue: '34.220.42.74',description: 'Staging server')
+        string(name:'tomcat_prod',defaultValue: '54.213.254.58'. description: 'Production-server')
+    }
+    triggers{
+        pollSCM('* * * * *')
+    }
     stages{
         stage('Build'){
             steps{
@@ -12,26 +19,17 @@ pipeline{
                 }
             }
         }
-        stage('Deploy to staging'){
-            steps{
-                build job: 'deploy-to-staging'
-            }
-        }
-        stage('Deploying to production'){
-            steps{
-                timeout(time:5, unit: 'DAYS'){
-                    input message: 'Approve PRODUCTION Deployment?'
+        stage ('Deployments'){
+            parallel{
+                stage('Deploy yo staging'){
+                    steps{
+                        sh "scp -i /home/laura.donoso/key_aws_blog/lara.pem **/target/*.war ec2-user@{params.tomcat_dev}:/var/lib/tomcat7/webapps"
+                    }
                 }
-
-                build job: 'deploy-to-prod'
-            }
-            post{
-                success{
-                    echo 'Code deployed to Prodcution'
-                }
-
-                failure{
-                    echo ' Deployment failed'
+                stage('Deploy yo production'){
+                    steps{
+                        sh "scp -i /home/laura.donoso/key_aws_blog/lara.pem **/target/*.war ec2-user@{params.tomcat_prod}:/var/lib/tomcat7/webapps"
+                    }
                 }
             }
         }
