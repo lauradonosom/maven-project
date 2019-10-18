@@ -23,12 +23,12 @@ pipeline{
             parallel{
                 stage('Deploy yo staging'){
                     steps{
-                        sh "scp -i /home/laura.donoso/key_aws_blog/lara.pem **/target/*.war ec2-user@${params.tomcat_dev}:/var/lib/tomcat7/webapps"
+                        sh "scp -i "/home/laura.donoso/key_aws_blog/lara.pem" **/target/*.war ec2-user@${params.tomcat_dev}:/var/lib/tomcat7/webapps"
                     }
                 }
                 stage('Deploy yo production'){
                     steps{
-                        sh "scp -i /home/laura.donoso/key_aws_blog/lara.pem **/target/*.war ec2-user@${params.tomcat_prod}:/var/lib/tomcat7/webapps"
+                        sh "scp -i "/home/laura.donoso/key_aws_blog/lara.pem" **/target/*.war ec2-user@${params.tomcat_prod}:/var/lib/tomcat7/webapps"
                     }
                 }
             }
