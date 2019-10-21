@@ -1,38 +1,10 @@
 pipeline{
     agent any
-    parameters{
-        string(name: 'tomcat_dev', defaultValue: '34.219.221.136', description: 'Staging server')
-        string(name: 'tomcat_prod', defaultValue: '34.211.248.219', description: 'Production-server')
-    }
-    triggers{
-        pollSCM('* * * * *')
-    }
-    
-stages{
+    stages{
         stage('Build'){
             steps{
                 sh 'mvn clean package'
-            }
-            post{
-                success{
-                    echo 'Now Archiving...'
-                    archiveArtifacts artifacts: '**/target/*.war'
-                }
-            }
-        }
-        
-        stage ('Deployments'){
-            parallel{
-                stage('Deploy yo staging'){
-                    steps{
-                        sh "scp -rp -i /var/lib/jenkins/.ssh/lara.pem **/target/*.war ec2-user@${params.tomcat_dev}:/var/lib/tomcat7/webapps"
-                    }
-                }
-                stage('Deploy yo production'){
-                    steps{
-                        sh "scp -rp -i /var/lib/jenkins/.ssh/lara.pem **/target/*.war ec2-user@${params.tomcat_prod}:/var/lib/tomcat7/webapps"
-                    }
-                }
+                sh "docker build . -t  tomcatwebapp:${env.BUILD_ID}" 
             }
         }
     }
