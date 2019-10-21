@@ -25,12 +25,12 @@ stages{
             parallel{
                 stage('Deploy yo staging'){
                     steps{
-                        sh "scp -i /var/lib/jenkins/.ssh/lara.pem **/target/*.war ec2-user@${params.tomcat_dev}:/var/lib/tomcat7/webapps"
+                        sh "scp -i /var/lib/jenkins/.ssh/lara.pem -o StrictHostKeyChecking=no **/target/*.war ec2-user@${params.tomcat_dev}:/var/lib/tomcat7/webapps"
                     }
                 }
                 stage('Deploy yo production'){
                     steps{
-                        sh "scp -i /var/lib/jenkins/.ssh/lara.pem **/target/*.war ec2-user@${params.tomcat_prod}:/var/lib/tomcat7/webapps"
+                        sh "scp -i /var/lib/jenkins/.ssh/lara.pem -o StrictHostKeyChecking=no **/target/*.war ec2-user@${params.tomcat_prod}:/var/lib/tomcat7/webapps"
                     }
                 }
             }
